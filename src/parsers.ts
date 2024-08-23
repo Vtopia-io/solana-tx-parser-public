@@ -321,22 +321,23 @@ function decodeTokenInstruction(instruction: TransactionInstruction): ParsedInst
 			} as ParsedIdlInstruction<SplToken, "revoke">;
 			break;
 		}
-		case TokenInstruction.SetAuthority: {
-			const decodedIx = decodeSetAuthorityInstruction(instruction);
-			const authrorityTypeMap = {
-				[AuthorityType.AccountOwner]: { accountOwner: {} },
-				[AuthorityType.CloseAccount]: { closeAccount: {} },
-				[AuthorityType.FreezeAccount]: { freezeAccount: {} },
-				[AuthorityType.MintTokens]: { mintTokens: {} },
-			};
-			const multisig = decodedIx.keys.multiSigners.map((meta, idx) => ({ name: `signer_${idx}`, ...meta }));
-			parsed = {
-				name: "setAuthority",
-				accounts: [{ name: "account", ...decodedIx.keys.account }, { name: "currentAuthority", ...decodedIx.keys.currentAuthority }, ...multisig],
-				args: { authorityType: authrorityTypeMap[decodedIx.data.authorityType], newAuthority: decodedIx.data.newAuthority },
-			} as ParsedIdlInstruction<SplToken, "setAuthority">;
-			break;
-		}
+		// Disabling due to unknown error
+		// case TokenInstruction.SetAuthority: {
+		// 	const decodedIx = decodeSetAuthorityInstruction(instruction);
+		// 	const authrorityTypeMap = {
+		// 		[AuthorityType.AccountOwner]: { accountOwner: {} },
+		// 		[AuthorityType.CloseAccount]: { closeAccount: {} },
+		// 		[AuthorityType.FreezeAccount]: { freezeAccount: {} },
+		// 		[AuthorityType.MintTokens]: { mintTokens: {} },
+		// 	};
+		// 	const multisig = decodedIx.keys.multiSigners.map((meta, idx) => ({ name: `signer_${idx}`, ...meta }));
+		// 	parsed = {
+		// 		name: "setAuthority",
+		// 		accounts: [{ name: "account", ...decodedIx.keys.account }, { name: "currentAuthority", ...decodedIx.keys.currentAuthority }, ...multisig],
+		// 		args: { authorityType: authrorityTypeMap[decodedIx.data.authorityType], newAuthority: decodedIx.data.newAuthority },
+		// 	} as ParsedIdlInstruction<SplToken, "setAuthority">;
+		// 	break;
+		// }
 		case TokenInstruction.MintTo: {
 			const decodedIx = decodeMintToInstruction(instruction);
 			const multisig = decodedIx.keys.multiSigners.map((meta, idx) => ({ name: `signer_${idx}`, ...meta }));

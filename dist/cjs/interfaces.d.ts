@@ -1,4 +1,3 @@
-/// <reference types="bn.js" />
 import { splTokenProgram } from "@coral-xyz/spl-token";
 import { BN, Idl, IdlTypes } from "@coral-xyz/anchor";
 import { AccountMeta, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";

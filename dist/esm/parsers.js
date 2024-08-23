@@ -1,6 +1,6 @@
 import { Buffer } from "buffer";
 import { PublicKey, SystemInstruction, SystemProgram, Transaction, } from "@solana/web3.js";
-import { ASSOCIATED_TOKEN_PROGRAM_ID, AuthorityType, TOKEN_PROGRAM_ID, TokenInstruction, decodeApproveCheckedInstruction, decodeApproveInstruction, decodeBurnCheckedInstruction, decodeBurnInstruction, decodeCloseAccountInstruction, decodeFreezeAccountInstruction, decodeInitializeAccountInstruction, decodeInitializeMintInstruction, decodeInitializeMintInstructionUnchecked, decodeInitializeMultisigInstruction, decodeMintToCheckedInstruction, decodeMintToInstruction, decodeRevokeInstruction, decodeSetAuthorityInstruction, decodeThawAccountInstruction, decodeTransferCheckedInstruction, decodeTransferInstruction, } from "@solana/spl-token";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, TokenInstruction, decodeApproveCheckedInstruction, decodeApproveInstruction, decodeBurnCheckedInstruction, decodeBurnInstruction, decodeCloseAccountInstruction, decodeFreezeAccountInstruction, decodeInitializeAccountInstruction, decodeInitializeMintInstruction, decodeInitializeMintInstructionUnchecked, decodeInitializeMultisigInstruction, decodeMintToCheckedInstruction, decodeMintToInstruction, decodeRevokeInstruction, decodeThawAccountInstruction, decodeTransferCheckedInstruction, decodeTransferInstruction, } from "@solana/spl-token";
 import { BN, BorshInstructionCoder } from "@coral-xyz/anchor";
 import { blob, struct, u8 } from "@solana/buffer-layout";
 import { compiledInstructionToInstruction, flattenTransactionResponse, parsedInstructionToInstruction, parseTransactionAccounts } from "./helpers";
@@ -65,7 +65,7 @@ function decodeSystemInstruction(instruction) {
                     { name: "base", pubkey: decoded.basePubkey, isSigner: true, isWritable: false },
                 ],
                 args: {
-                    seed: decoded.seed,
+                    seed: decoded.seed, // string
                     owner: decoded.programId,
                     base: decoded.basePubkey,
                 },
@@ -264,22 +264,23 @@ function decodeTokenInstruction(instruction) {
             };
             break;
         }
-        case TokenInstruction.SetAuthority: {
-            const decodedIx = decodeSetAuthorityInstruction(instruction);
-            const authrorityTypeMap = {
-                [AuthorityType.AccountOwner]: { accountOwner: {} },
-                [AuthorityType.CloseAccount]: { closeAccount: {} },
-                [AuthorityType.FreezeAccount]: { freezeAccount: {} },
-                [AuthorityType.MintTokens]: { mintTokens: {} },
-            };
-            const multisig = decodedIx.keys.multiSigners.map((meta, idx) => ({ name: `signer_${idx}`, ...meta }));
-            parsed = {
-                name: "setAuthority",
-                accounts: [{ name: "account", ...decodedIx.keys.account }, { name: "currentAuthority", ...decodedIx.keys.currentAuthority }, ...multisig],
-                args: { authorityType: authrorityTypeMap[decodedIx.data.authorityType], newAuthority: decodedIx.data.newAuthority },
-            };
-            break;
-        }
+        // Disabling due to unknown error
+        // case TokenInstruction.SetAuthority: {
+        // 	const decodedIx = decodeSetAuthorityInstruction(instruction);
+        // 	const authrorityTypeMap = {
+        // 		[AuthorityType.AccountOwner]: { accountOwner: {} },
+        // 		[AuthorityType.CloseAccount]: { closeAccount: {} },
+        // 		[AuthorityType.FreezeAccount]: { freezeAccount: {} },
+        // 		[AuthorityType.MintTokens]: { mintTokens: {} },
+        // 	};
+        // 	const multisig = decodedIx.keys.multiSigners.map((meta, idx) => ({ name: `signer_${idx}`, ...meta }));
+        // 	parsed = {
+        // 		name: "setAuthority",
+        // 		accounts: [{ name: "account", ...decodedIx.keys.account }, { name: "currentAuthority", ...decodedIx.keys.currentAuthority }, ...multisig],
+        // 		args: { authorityType: authrorityTypeMap[decodedIx.data.authorityType], newAuthority: decodedIx.data.newAuthority },
+        // 	} as ParsedIdlInstruction<SplToken, "setAuthority">;
+        // 	break;
+        // }
         case TokenInstruction.MintTo: {
             const decodedIx = decodeMintToInstruction(instruction);
             const multisig = decodedIx.keys.multiSigners.map((meta, idx) => ({ name: `signer_${idx}`, ...meta }));

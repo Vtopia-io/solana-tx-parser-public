@@ -68,7 +68,7 @@ function decodeSystemInstruction(instruction) {
                     { name: "base", pubkey: decoded.basePubkey, isSigner: true, isWritable: false },
                 ],
                 args: {
-                    seed: decoded.seed,
+                    seed: decoded.seed, // string
                     owner: decoded.programId,
                     base: decoded.basePubkey,
                 },
@@ -267,22 +267,23 @@ function decodeTokenInstruction(instruction) {
             };
             break;
         }
-        case spl_token_1.TokenInstruction.SetAuthority: {
-            const decodedIx = (0, spl_token_1.decodeSetAuthorityInstruction)(instruction);
-            const authrorityTypeMap = {
-                [spl_token_1.AuthorityType.AccountOwner]: { accountOwner: {} },
-                [spl_token_1.AuthorityType.CloseAccount]: { closeAccount: {} },
-                [spl_token_1.AuthorityType.FreezeAccount]: { freezeAccount: {} },
-                [spl_token_1.AuthorityType.MintTokens]: { mintTokens: {} },
-            };
-            const multisig = decodedIx.keys.multiSigners.map((meta, idx) => ({ name: `signer_${idx}`, ...meta }));
-            parsed = {
-                name: "setAuthority",
-                accounts: [{ name: "account", ...decodedIx.keys.account }, { name: "currentAuthority", ...decodedIx.keys.currentAuthority }, ...multisig],
-                args: { authorityType: authrorityTypeMap[decodedIx.data.authorityType], newAuthority: decodedIx.data.newAuthority },
-            };
-            break;
-        }
+        // Disabling due to unknown error
+        // case TokenInstruction.SetAuthority: {
+        // 	const decodedIx = decodeSetAuthorityInstruction(instruction);
+        // 	const authrorityTypeMap = {
+        // 		[AuthorityType.AccountOwner]: { accountOwner: {} },
+        // 		[AuthorityType.CloseAccount]: { closeAccount: {} },
+        // 		[AuthorityType.FreezeAccount]: { freezeAccount: {} },
+        // 		[AuthorityType.MintTokens]: { mintTokens: {} },
+        // 	};
+        // 	const multisig = decodedIx.keys.multiSigners.map((meta, idx) => ({ name: `signer_${idx}`, ...meta }));
+        // 	parsed = {
+        // 		name: "setAuthority",
+        // 		accounts: [{ name: "account", ...decodedIx.keys.account }, { name: "currentAuthority", ...decodedIx.keys.currentAuthority }, ...multisig],
+        // 		args: { authorityType: authrorityTypeMap[decodedIx.data.authorityType], newAuthority: decodedIx.data.newAuthority },
+        // 	} as ParsedIdlInstruction<SplToken, "setAuthority">;
+        // 	break;
+        // }
         case spl_token_1.TokenInstruction.MintTo: {
             const decodedIx = (0, spl_token_1.decodeMintToInstruction)(instruction);
             const multisig = decodedIx.keys.multiSigners.map((meta, idx) => ({ name: `signer_${idx}`, ...meta }));
